@@ -8,13 +8,14 @@ import '../../core/config/app_config.dart';
 class NutritionService {
   // Base URL for the nutrition API from config
   static String get baseUrl => AppConfig.apiBaseUrl;
-  
+
   // Stream controller for real-time nutrition updates
-  final _nutritionStreamController = StreamController<List<SavedNutrition>>.broadcast();
-  
+  final _nutritionStreamController =
+      StreamController<List<SavedNutrition>>.broadcast();
+
   // Current date being tracked
   DateTime? _currentDate;
-  
+
   // Polling timer for automatic updates
   Timer? _pollingTimer;
 
@@ -140,12 +141,12 @@ class NutritionService {
       if (response.statusCode == 201 || response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
         final savedNutrition = SavedNutrition.fromJson(data);
-        
+
         // Refresh stream after saving new data
         if (_currentDate != null) {
           _fetchAndEmitData(_currentDate!);
         }
-        
+
         return savedNutrition;
       } else {
         print(
@@ -207,42 +208,42 @@ class NutritionService {
           .timeout(AppConfig.apiTimeout);
 
       final success = response.statusCode == 200 || response.statusCode == 204;
-      
+
       // Refresh stream after deletion
       if (success && _currentDate != null) {
         _fetchAndEmitData(_currentDate!);
       }
-      
+
       return success;
     } catch (e) {
       print('Exception deleting nutrition: $e');
       return false;
     }
   }
-  
+
   /// Get stream of nutrition data for a specific date with auto-refresh
   Stream<List<SavedNutrition>> getNutritionStreamForDate(DateTime date) {
     print('🔄 Starting stream for date: ${_formatDate(date)}');
-    
+
     // Update current date
     _currentDate = date;
-    
+
     // Cancel existing timer
     _pollingTimer?.cancel();
-    
+
     // Emit initial data immediately
     _fetchAndEmitData(date);
-    
+
     // Set up polling every 5 seconds for real-time updates
     _pollingTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
       if (_currentDate != null) {
         _fetchAndEmitData(_currentDate!);
       }
     });
-    
+
     return _nutritionStreamController.stream;
   }
-  
+
   /// Manually refresh the current date's data
   void refreshCurrentDate() {
     if (_currentDate != null) {
@@ -250,14 +251,14 @@ class NutritionService {
       _fetchAndEmitData(_currentDate!);
     }
   }
-  
+
   /// Stop the polling timer and close stream
   void dispose() {
     print('🛑 Stopping nutrition stream');
     _pollingTimer?.cancel();
     _nutritionStreamController.close();
   }
-  
+
   /// Internal method to fetch data and emit to stream
   Future<void> _fetchAndEmitData(DateTime date) async {
     try {
@@ -272,7 +273,7 @@ class NutritionService {
       }
     }
   }
-  
+
   /// Helper to format date
   String _formatDate(DateTime date) {
     return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';

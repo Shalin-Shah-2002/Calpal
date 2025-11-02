@@ -90,7 +90,10 @@ class HistoryView extends GetView<HistoryController> {
                   const SizedBox(width: 8),
                   // Live indicator
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.green.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(10),
@@ -127,10 +130,7 @@ class HistoryView extends GetView<HistoryController> {
               ),
               const Text(
                 'Auto-refreshing every 5s',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
-                ),
+                style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
               ),
             ],
           ),
@@ -258,11 +258,7 @@ class HistoryView extends GetView<HistoryController> {
             children: [
               const Row(
                 children: [
-                  Icon(
-                    Icons.analytics_rounded,
-                    color: Colors.white,
-                    size: 24,
-                  ),
+                  Icon(Icons.analytics_rounded, color: Colors.white, size: 24),
                   SizedBox(width: 12),
                   Text(
                     'Daily Summary',
@@ -367,8 +363,6 @@ class HistoryView extends GetView<HistoryController> {
     );
   }
 
-
-
   Widget _buildNutritionList(double bottomPadding) {
     return Obx(() {
       if (controller.isLoading.value && controller.savedNutritionList.isEmpty) {
@@ -382,10 +376,7 @@ class HistoryView extends GetView<HistoryController> {
               const SizedBox(height: 16),
               Text(
                 'Loading nutrition data...',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
               ),
             ],
           ),
@@ -489,10 +480,7 @@ class HistoryView extends GetView<HistoryController> {
             children: [
               // Health Score Badge
               if (nutrition.healthyScore != null)
-                HealthScoreBadge(
-                  score: nutrition.healthyScore!,
-                  size: 50,
-                ),
+                HealthScoreBadge(score: nutrition.healthyScore!, size: 50),
               if (nutrition.healthyScore != null) const SizedBox(width: 16),
               // Food Name and Time
               Expanded(
@@ -518,8 +506,9 @@ class HistoryView extends GetView<HistoryController> {
                         const SizedBox(width: 4),
                         Text(
                           nutrition.createdAt != null
-                              ? DateFormat('h:mm a')
-                                  .format(nutrition.createdAt!.toLocal())
+                              ? DateFormat(
+                                  'h:mm a',
+                                ).format(nutrition.createdAt!.toLocal())
                               : 'Unknown',
                           style: const TextStyle(
                             fontSize: 12,

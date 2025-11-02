@@ -10,7 +10,7 @@ class AppConfig {
   static String get apiBaseUrl {
     // Production backend on Render
     return 'https://calpal-app-backend.onrender.com';
-    
+
     // Uncomment below for local development:
     // if (Platform.isAndroid) {
     //   return 'http://10.0.2.2:3000';

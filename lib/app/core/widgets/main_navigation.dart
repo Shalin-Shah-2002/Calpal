@@ -35,7 +35,7 @@ class _MainNavigationViewState extends State<MainNavigationView> {
         backgroundColor: Colors.white,
         items: const [
           NavBarItem(icon: Icons.search_rounded, label: 'Search'),
-          
+
           NavBarItem(icon: Icons.calendar_today_rounded, label: 'History'),
         ],
       ),

@@ -14,7 +14,7 @@ class HistoryController extends GetxController {
   final totalProtein = 0.0.obs;
   final totalCarbs = 0.0.obs;
   final totalFats = 0.0.obs;
-  
+
   // Stream subscription for real-time updates
   StreamSubscription<List<SavedNutrition>>? _nutritionSubscription;
 
@@ -23,7 +23,7 @@ class HistoryController extends GetxController {
     super.onInit();
     _startStreamForDate(selectedDate.value);
   }
-  
+
   @override
   void onClose() {
     _nutritionSubscription?.cancel();
@@ -36,31 +36,31 @@ class HistoryController extends GetxController {
     try {
       isLoading.value = true;
       selectedDate.value = date;
-      
+
       // Cancel previous subscription
       _nutritionSubscription?.cancel();
-      
+
       // Subscribe to nutrition stream
       _nutritionSubscription = _nutritionService
           .getNutritionStreamForDate(date)
           .listen(
-        (data) {
-          // Update UI with new data
-          savedNutritionList.value = data;
-          _calculateTotals();
-          isLoading.value = false;
-        },
-        onError: (error) {
-          isLoading.value = false;
-          Get.snackbar(
-            'Error',
-            'Failed to load nutrition data',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red[100],
-            colorText: Colors.red[900],
+            (data) {
+              // Update UI with new data
+              savedNutritionList.value = data;
+              _calculateTotals();
+              isLoading.value = false;
+            },
+            onError: (error) {
+              isLoading.value = false;
+              Get.snackbar(
+                'Error',
+                'Failed to load nutrition data',
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: Colors.red[100],
+                colorText: Colors.red[900],
+              );
+            },
           );
-        },
-      );
     } catch (e) {
       isLoading.value = false;
       Get.snackbar(
@@ -72,12 +72,12 @@ class HistoryController extends GetxController {
       );
     }
   }
-  
+
   /// Load nutrition data for a specific date (backward compatibility)
   Future<void> loadNutritionForDate(DateTime date) async {
     _startStreamForDate(date);
   }
-  
+
   /// Manually refresh current date
   void refreshData() {
     _nutritionService.refreshCurrentDate();

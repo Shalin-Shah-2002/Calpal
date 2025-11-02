@@ -94,10 +94,7 @@ class HomeView extends GetView<HomeController> {
               ),
               Text(
                 'Your nutrition companion',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
-                ),
+                style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
               ),
             ],
           ),
@@ -125,28 +122,30 @@ class HomeView extends GetView<HomeController> {
             onSubmitted: (value) => controller.onSearchPressed(),
           ),
           const SizedBox(height: 16),
-          Obx(() => controller.isLoading.value
-              ? Center(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 16),
-                      CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          AppColors.primary,
+          Obx(
+            () => controller.isLoading.value
+                ? Center(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 16),
+                        CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.primary,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      const Text(
-                        'Analyzing nutrition...',
-                        style: TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: 14,
+                        const SizedBox(height: 12),
+                        const Text(
+                          'Analyzing nutrition...',
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 14,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                )
-              : const SizedBox.shrink()),
+                      ],
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ),
           Obx(() {
             if (controller.errorMessage.value.isNotEmpty) {
               return Container(
@@ -331,7 +330,8 @@ class HomeView extends GetView<HomeController> {
                     ),
                     _buildModernNutrientRow(
                       'Carbs',
-                      data.macronutrients!.carbohydratesG?.toStringAsFixed(1) ?? '0',
+                      data.macronutrients!.carbohydratesG?.toStringAsFixed(1) ??
+                          '0',
                       'g',
                       Icons.grain_rounded,
                       Colors.brown,
@@ -348,74 +348,74 @@ class HomeView extends GetView<HomeController> {
               ),
             ),
 
-              // Micronutrients
-              if (data.micronutrients != null) ...[
-                const SizedBox(height: 16),
-                ExpansionTile(
-                  title: const Text(
-                    'Micronutrients & Vitamins',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  children: [
-                    if (data.micronutrients!.sodiumMg != null)
-                      _buildNutritionRow(
-                        'Sodium',
-                        data.micronutrients!.sodiumMg,
-                        'mg',
-                        Icons.water_drop,
-                        Colors.blue,
-                      ),
-                    if (data.micronutrients!.potassiumMg != null)
-                      _buildNutritionRow(
-                        'Potassium',
-                        data.micronutrients!.potassiumMg,
-                        'mg',
-                        Icons.bolt,
-                        Colors.amber,
-                      ),
-                    if (data.micronutrients!.calciumMg != null)
-                      _buildNutritionRow(
-                        'Calcium',
-                        data.micronutrients!.calciumMg,
-                        'mg',
-                        Icons.medication,
-                        Colors.grey,
-                      ),
-                    if (data.micronutrients!.ironMg != null)
-                      _buildNutritionRow(
-                        'Iron',
-                        data.micronutrients!.ironMg,
-                        'mg',
-                        Icons.battery_charging_full,
-                        Colors.red[900]!,
-                      ),
-                    if (data.micronutrients!.vitaminCMg != null)
-                      _buildNutritionRow(
-                        'Vitamin C',
-                        data.micronutrients!.vitaminCMg,
-                        'mg',
-                        Icons.local_florist,
-                        Colors.orange[700]!,
-                      ),
-                    if (data.micronutrients!.vitaminDMcg != null)
-                      _buildNutritionRow(
-                        'Vitamin D',
-                        data.micronutrients!.vitaminDMcg,
-                        'mcg',
-                        Icons.wb_sunny,
-                        Colors.yellow[600]!,
-                      ),
-                    if (data.micronutrients!.vitaminB12Mcg != null)
-                      _buildNutritionRow(
-                        'Vitamin B12',
-                        data.micronutrients!.vitaminB12Mcg,
-                        'mcg',
-                        Icons.energy_savings_leaf,
-                        Colors.green[700]!,
-                      ),
-                  ],
+            // Micronutrients
+            if (data.micronutrients != null) ...[
+              const SizedBox(height: 16),
+              ExpansionTile(
+                title: const Text(
+                  'Micronutrients & Vitamins',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-              ],
+                children: [
+                  if (data.micronutrients!.sodiumMg != null)
+                    _buildNutritionRow(
+                      'Sodium',
+                      data.micronutrients!.sodiumMg,
+                      'mg',
+                      Icons.water_drop,
+                      Colors.blue,
+                    ),
+                  if (data.micronutrients!.potassiumMg != null)
+                    _buildNutritionRow(
+                      'Potassium',
+                      data.micronutrients!.potassiumMg,
+                      'mg',
+                      Icons.bolt,
+                      Colors.amber,
+                    ),
+                  if (data.micronutrients!.calciumMg != null)
+                    _buildNutritionRow(
+                      'Calcium',
+                      data.micronutrients!.calciumMg,
+                      'mg',
+                      Icons.medication,
+                      Colors.grey,
+                    ),
+                  if (data.micronutrients!.ironMg != null)
+                    _buildNutritionRow(
+                      'Iron',
+                      data.micronutrients!.ironMg,
+                      'mg',
+                      Icons.battery_charging_full,
+                      Colors.red[900]!,
+                    ),
+                  if (data.micronutrients!.vitaminCMg != null)
+                    _buildNutritionRow(
+                      'Vitamin C',
+                      data.micronutrients!.vitaminCMg,
+                      'mg',
+                      Icons.local_florist,
+                      Colors.orange[700]!,
+                    ),
+                  if (data.micronutrients!.vitaminDMcg != null)
+                    _buildNutritionRow(
+                      'Vitamin D',
+                      data.micronutrients!.vitaminDMcg,
+                      'mcg',
+                      Icons.wb_sunny,
+                      Colors.yellow[600]!,
+                    ),
+                  if (data.micronutrients!.vitaminB12Mcg != null)
+                    _buildNutritionRow(
+                      'Vitamin B12',
+                      data.micronutrients!.vitaminB12Mcg,
+                      'mcg',
+                      Icons.energy_savings_leaf,
+                      Colors.green[700]!,
+                    ),
+                ],
+              ),
+            ],
 
             // Notes
             if (data.notes != null && data.notes!.isNotEmpty) ...[
@@ -425,9 +425,7 @@ class HomeView extends GetView<HomeController> {
                 decoration: BoxDecoration(
                   color: AppColors.info.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: AppColors.info.withOpacity(0.2),
-                  ),
+                  border: Border.all(color: AppColors.info.withOpacity(0.2)),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,

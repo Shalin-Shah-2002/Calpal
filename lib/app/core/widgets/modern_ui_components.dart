@@ -37,7 +37,8 @@ class ModernCard extends StatelessWidget {
         gradient: gradient,
         color: gradient == null ? (backgroundColor ?? Colors.white) : null,
         borderRadius: BorderRadius.circular(borderRadius),
-        boxShadow: boxShadow ??
+        boxShadow:
+            boxShadow ??
             [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -118,10 +119,7 @@ class FrostedGlassCard extends StatelessWidget {
     );
 
     if (onTap != null) {
-      return GestureDetector(
-        onTap: onTap,
-        child: content,
-      );
+      return GestureDetector(onTap: onTap, child: content);
     }
 
     return content;
@@ -165,8 +163,9 @@ class ModernButton extends StatelessWidget {
         boxShadow: onPressed != null
             ? [
                 BoxShadow(
-                  color: (backgroundColor ?? AppColors.primary)
-                      .withOpacity(0.3),
+                  color: (backgroundColor ?? AppColors.primary).withOpacity(
+                    0.3,
+                  ),
                   blurRadius: 12,
                   offset: Offset(0, elevation),
                 ),
@@ -179,7 +178,8 @@ class ModernButton extends StatelessWidget {
           onTap: isLoading ? null : onPressed,
           borderRadius: BorderRadius.circular(borderRadius),
           child: Container(
-            padding: padding ??
+            padding:
+                padding ??
                 const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -254,10 +254,7 @@ class ModernSearchBar extends StatelessWidget {
         onSubmitted: onSubmitted,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(
-            color: Colors.grey[400],
-            fontSize: 16,
-          ),
+          hintStyle: TextStyle(color: Colors.grey[400], fontSize: 16),
           prefixIcon: Icon(
             Icons.search_rounded,
             color: AppColors.primary,
@@ -334,11 +331,7 @@ class ModernStatCard extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            color: Colors.white,
-            size: 28,
-          ),
+          Icon(icon, color: Colors.white, size: 28),
           const SizedBox(height: 8),
           Text(
             label,
@@ -413,11 +406,7 @@ class ModernTag extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(
-                icon,
-                size: 16,
-                color: textColor ?? AppColors.primary,
-              ),
+              Icon(icon, size: 16, color: textColor ?? AppColors.primary),
               const SizedBox(width: 4),
             ],
             Text(
@@ -495,9 +484,7 @@ class ModernSectionHeader extends StatelessWidget {
         if (onActionTap != null && actionText != null)
           TextButton(
             onPressed: onActionTap,
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.primary,
-            ),
+            style: TextButton.styleFrom(foregroundColor: AppColors.primary),
             child: Text(
               actionText!,
               style: const TextStyle(fontWeight: FontWeight.w600),
@@ -513,11 +500,7 @@ class HealthScoreBadge extends StatelessWidget {
   final int score;
   final double size;
 
-  const HealthScoreBadge({
-    super.key,
-    required this.score,
-    this.size = 60,
-  });
+  const HealthScoreBadge({super.key, required this.score, this.size = 60});
 
   Color get _getScoreColor {
     if (score >= 8) return AppColors.healthHigh;
