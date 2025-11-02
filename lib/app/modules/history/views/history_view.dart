@@ -3,110 +3,242 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../data/models/saved_nutrition_model.dart';
 import '../controllers/history_controller.dart';
+import '../../../core/widgets/modern_ui_components.dart';
+import '../../../core/theme/app_colors.dart';
 
 class HistoryView extends GetView<HistoryController> {
   const HistoryView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom + 115.0;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Nutrition History'),
-        centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        elevation: 2,
-      ),
-      body: Column(
-        children: [
-          _buildDateSelector(),
-          _buildDailySummary(),
-          Expanded(child: _buildNutritionList()),
-        ],
+      backgroundColor: Colors.transparent,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.teaGreen.withOpacity(0.3),
+              Colors.white,
+              AppColors.celadon.withOpacity(0.2),
+            ],
+          ),
+        ),
+        child: SafeArea(
+          bottom: false, // Don't apply safe area to bottom
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: _buildModernHeader(),
+              ),
+              _buildDateSelector(),
+              _buildDailySummary(),
+              Expanded(child: _buildNutritionList(bottomPadding)),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildDateSelector() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Obx(() {
-        final date = controller.selectedDate.value;
-        final isToday = _isToday(date);
-        final formattedDate = DateFormat('EEEE, MMM d, yyyy').format(date);
-
-        return Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  onPressed: controller.previousDay,
-                  icon: const Icon(Icons.chevron_left, size: 32),
-                  color: Colors.green[700],
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Text(
-                        formattedDate,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      if (isToday)
-                        Container(
-                          margin: const EdgeInsets.only(top: 4),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.green[100],
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            'Today',
-                            style: TextStyle(
-                              color: Colors.green[900],
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  onPressed: !isToday ? controller.nextDay : null,
-                  icon: const Icon(Icons.chevron_right, size: 32),
-                  color: isToday ? Colors.grey : Colors.green[700],
-                ),
-              ],
-            ),
-            if (!isToday) ...[
-              const SizedBox(height: 8),
-              TextButton.icon(
-                onPressed: controller.goToToday,
-                icon: const Icon(Icons.today, size: 16),
-                label: const Text('Go to Today'),
-                style: TextButton.styleFrom(foregroundColor: Colors.green[700]),
+  Widget _buildModernHeader() {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withOpacity(0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
               ),
             ],
-          ],
-        );
-      }),
+          ),
+          child: const Icon(
+            Icons.calendar_today_rounded,
+            color: Colors.white,
+            size: 28,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Flexible(
+                    child: Text(
+                      'Nutrition History',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Live indicator
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: Colors.green.withOpacity(0.5),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: const BoxDecoration(
+                            color: Colors.green,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Text(
+                          'LIVE',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const Text(
+                'Auto-refreshing every 5s',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDateSelector() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: ModernCard(
+        padding: const EdgeInsets.all(20),
+        child: Obx(() {
+          final date = controller.selectedDate.value;
+          final isToday = _isToday(date);
+          final formattedDate = DateFormat('EEEE, MMM d, yyyy').format(date);
+
+          return Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryLight.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: IconButton(
+                      onPressed: controller.previousDay,
+                      icon: const Icon(Icons.chevron_left_rounded, size: 28),
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Text(
+                          formattedDate,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        if (isToday)
+                          Container(
+                            margin: const EdgeInsets.only(top: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: AppColors.primaryGradient,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primary.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: const Text(
+                              'Today',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: isToday
+                          ? Colors.grey[200]
+                          : AppColors.primaryLight.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: IconButton(
+                      onPressed: !isToday ? controller.nextDay : null,
+                      icon: const Icon(Icons.chevron_right_rounded, size: 28),
+                      color: isToday ? Colors.grey[400] : AppColors.primary,
+                    ),
+                  ),
+                ],
+              ),
+              if (!isToday) ...[
+                const SizedBox(height: 12),
+                ModernButton(
+                  text: 'Jump to Today',
+                  icon: Icons.today_rounded,
+                  onPressed: controller.goToToday,
+                  gradient: AppColors.primaryGradient,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
+                ),
+              ],
+            ],
+          );
+        }),
+      ),
     );
   }
 
@@ -116,70 +248,70 @@ class HistoryView extends GetView<HistoryController> {
         return const SizedBox.shrink();
       }
 
-      return Container(
-        margin: const EdgeInsets.all(16),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.green[400]!, Colors.green[600]!],
-          ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.green.withOpacity(0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Daily Summary',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+      return Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: ModernCard(
+          padding: const EdgeInsets.all(20),
+          gradient: AppColors.primaryGradient,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Row(
+                children: [
+                  Icon(
+                    Icons.analytics_rounded,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                  SizedBox(width: 12),
+                  Text(
+                    'Daily Summary',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildSummaryItem(
-                  'Calories',
-                  controller.totalCalories.value.toStringAsFixed(0),
-                  'kcal',
-                  Icons.local_fire_department,
-                ),
-                _buildSummaryItem(
-                  'Protein',
-                  controller.totalProtein.value.toStringAsFixed(1),
-                  'g',
-                  Icons.fitness_center,
-                ),
-                _buildSummaryItem(
-                  'Carbs',
-                  controller.totalCarbs.value.toStringAsFixed(1),
-                  'g',
-                  Icons.grain,
-                ),
-                _buildSummaryItem(
-                  'Fats',
-                  controller.totalFats.value.toStringAsFixed(1),
-                  'g',
-                  Icons.opacity,
-                ),
-              ],
-            ),
-          ],
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildModernSummaryItem(
+                    'Calories',
+                    controller.totalCalories.value.toStringAsFixed(0),
+                    'kcal',
+                    Icons.local_fire_department_rounded,
+                  ),
+                  _buildModernSummaryItem(
+                    'Protein',
+                    controller.totalProtein.value.toStringAsFixed(1),
+                    'g',
+                    Icons.fitness_center_rounded,
+                  ),
+                  _buildModernSummaryItem(
+                    'Carbs',
+                    controller.totalCarbs.value.toStringAsFixed(1),
+                    'g',
+                    Icons.grain_rounded,
+                  ),
+                  _buildModernSummaryItem(
+                    'Fats',
+                    controller.totalFats.value.toStringAsFixed(1),
+                    'g',
+                    Icons.opacity_rounded,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       );
     });
   }
 
-  Widget _buildSummaryItem(
+  Widget _buildModernSummaryItem(
     String label,
     String value,
     String unit,
@@ -187,196 +319,332 @@ class HistoryView extends GetView<HistoryController> {
   ) {
     return Column(
       children: [
-        Icon(icon, color: Colors.white, size: 28),
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: Colors.white, size: 24),
+        ),
         const SizedBox(height: 8),
         Text(
           label,
-          style: const TextStyle(color: Colors.white70, fontSize: 12),
+          style: const TextStyle(
+            color: Colors.white70,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         const SizedBox(height: 4),
-        Text(
-          '$value $unit',
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(width: 2),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 1),
+              child: Text(
+                unit,
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
   }
 
-  Widget _buildNutritionList() {
-    return Obx(() {
-      if (controller.isLoading.value) {
-        return const Center(child: CircularProgressIndicator());
-      }
 
-      if (controller.savedNutritionList.isEmpty) {
+
+  Widget _buildNutritionList(double bottomPadding) {
+    return Obx(() {
+      if (controller.isLoading.value && controller.savedNutritionList.isEmpty) {
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.restaurant_menu, size: 80, color: Colors.grey[300]),
+              CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+              ),
               const SizedBox(height: 16),
               Text(
-                'No meals logged for this day',
+                'Loading nutrition data...',
                 style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.w500,
+                  color: AppColors.textSecondary,
+                  fontSize: 14,
                 ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Start tracking your nutrition!',
-                style: TextStyle(fontSize: 14, color: Colors.grey[500]),
               ),
             ],
           ),
         );
       }
 
-      // Calculate safe bottom padding for floating nav bar
-      final bottomPadding = MediaQuery.of(Get.context!).padding.bottom + 115.0;
+      if (controller.savedNutritionList.isEmpty) {
+        return RefreshIndicator(
+          color: AppColors.primary,
+          onRefresh: () async {
+            controller.refreshData();
+            await Future.delayed(const Duration(milliseconds: 500));
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: SizedBox(
+              height: MediaQuery.of(Get.context!).size.height * 0.5,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryLight.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.restaurant_menu_rounded,
+                        size: 64,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    const Text(
+                      'No meals logged',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Start tracking your nutrition!',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Pull down to refresh',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textSecondary.withOpacity(0.7),
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      }
 
-      return ListView.builder(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 16,
-          bottom: bottomPadding,
-        ),
-        itemCount: controller.savedNutritionList.length,
-        itemBuilder: (context, index) {
-          final nutrition = controller.savedNutritionList[index];
-          return _buildNutritionCard(nutrition);
+      return RefreshIndicator(
+        color: AppColors.primary,
+        onRefresh: () async {
+          controller.refreshData();
+          await Future.delayed(const Duration(milliseconds: 500));
         },
+        child: ListView.builder(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 8,
+            bottom: bottomPadding,
+          ),
+          itemCount: controller.savedNutritionList.length,
+          itemBuilder: (context, index) {
+            final nutrition = controller.savedNutritionList[index];
+            return _buildModernNutritionCard(nutrition);
+          },
+        ),
       );
     });
   }
 
-  Widget _buildNutritionCard(SavedNutrition nutrition) {
-    return Card(
-      elevation: 4,
+  Widget _buildModernNutritionCard(SavedNutrition nutrition) {
+    return ModernCard(
       margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: InkWell(
-        onTap: () => _showNutritionDetails(nutrition),
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.all(20),
+      onTap: () => _showNutritionDetails(nutrition),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  // Health Score Badge
-                  if (nutrition.healthyScore != null)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
+              // Health Score Badge
+              if (nutrition.healthyScore != null)
+                HealthScoreBadge(
+                  score: nutrition.healthyScore!,
+                  size: 50,
+                ),
+              if (nutrition.healthyScore != null) const SizedBox(width: 16),
+              // Food Name and Time
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      nutrition.foodName,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
                       ),
-                      decoration: BoxDecoration(
-                        color: _getScoreColor(nutrition.healthyScore!),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.star, size: 16, color: Colors.white),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${nutrition.healthyScore}/10',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.access_time_rounded,
+                          size: 14,
+                          color: AppColors.textSecondary,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          nutrition.createdAt != null
+                              ? DateFormat('h:mm a')
+                                  .format(nutrition.createdAt!.toLocal())
+                              : 'Unknown',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  const Spacer(),
-                  // Delete Button
-                  IconButton(
-                    onPressed: () => _confirmDelete(nutrition),
-                    icon: const Icon(Icons.delete_outline),
-                    color: Colors.red[400],
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              // Food Name
-              Text(
-                nutrition.foodName,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  ],
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                'Serving: ${nutrition.servingSize}g',
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-              const SizedBox(height: 12),
-              // Quick Stats
-              Row(
-                children: [
-                  _buildQuickStat(
-                    Icons.local_fire_department,
-                    '${nutrition.calories.toStringAsFixed(0)} kcal',
-                    Colors.orange,
-                  ),
-                  const SizedBox(width: 16),
-                  if (nutrition.macronutrients?.proteinG != null)
-                    _buildQuickStat(
-                      Icons.fitness_center,
-                      '${nutrition.macronutrients!.proteinG!.toStringAsFixed(1)}g protein',
-                      Colors.red,
-                    ),
-                ],
-              ),
-              if (nutrition.createdAt != null) ...[
-                const SizedBox(height: 8),
-                Text(
-                  'Added at ${DateFormat('h:mm a').format(nutrition.createdAt!.toLocal())}',
-                  style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+              // Delete Button
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.error.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-              ],
+                child: IconButton(
+                  onPressed: () => _confirmDelete(nutrition),
+                  icon: const Icon(Icons.delete_outline_rounded),
+                  color: AppColors.error,
+                  iconSize: 20,
+                ),
+              ),
             ],
           ),
-        ),
+          const SizedBox(height: 16),
+          // Serving Size
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: AppColors.primaryLight.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.straighten_rounded,
+                  size: 16,
+                  color: AppColors.primary,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  'Serving: ${nutrition.servingSize}g',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Quick Stats Grid
+          Row(
+            children: [
+              Expanded(
+                child: _buildModernQuickStat(
+                  Icons.local_fire_department_rounded,
+                  nutrition.calories.toStringAsFixed(0),
+                  'kcal',
+                  Colors.orange,
+                ),
+              ),
+              const SizedBox(width: 12),
+              if (nutrition.macronutrients?.proteinG != null)
+                Expanded(
+                  child: _buildModernQuickStat(
+                    Icons.fitness_center_rounded,
+                    nutrition.macronutrients!.proteinG!.toStringAsFixed(1),
+                    'g protein',
+                    Colors.red,
+                  ),
+                ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildQuickStat(IconData icon, String text, Color color) {
-    return Row(
-      children: [
-        Icon(icon, size: 16, color: color),
-        const SizedBox(width: 4),
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[700],
-            fontWeight: FontWeight.w500,
+  Widget _buildModernQuickStat(
+    IconData icon,
+    String value,
+    String label,
+    Color color,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: color.withOpacity(0.8),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
-  }
-
-  Color _getScoreColor(int score) {
-    if (score >= 8) return Colors.green;
-    if (score >= 6) return Colors.lightGreen;
-    if (score >= 4) return Colors.orange;
-    return Colors.red;
   }
 
   bool _isToday(DateTime date) {

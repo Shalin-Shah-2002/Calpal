@@ -1,31 +1,24 @@
-import 'dart:io';
-
 /// App configuration constants
 class AppConfig {
   AppConfig._();
 
   /// Backend API base URL (Gemini-powered nutrition API)
-  /// Automatically selects the correct URL based on platform
+  /// Now using Render hosted backend
   ///
-  /// Manual override options:
-  /// - Android Emulator: http://10.0.2.2:3000
-  /// - iOS Simulator: http://localhost:3000
-  /// - Physical Device: http://YOUR_COMPUTER_IP:3000 (e.g., http://192.168.1.5:3000)
+  /// Production URL: https://calpal-app-backend.onrender.com
+  /// Local development: Uncomment the platform-specific URLs below
   static String get apiBaseUrl {
-    // Uncomment and set your computer's IP if using a physical device
-    // const physicalDeviceIP = 'http://192.168.1.5:3000';
-    // return physicalDeviceIP;
-
-    if (Platform.isAndroid) {
-      // Android Emulator uses special IP to reach host machine
-      return 'http://10.0.2.2:3000';
-    } else if (Platform.isIOS) {
-      // iOS Simulator can use localhost directly
-      return 'http://localhost:3000';
-    } else {
-      // Fallback for other platforms
-      return 'http://localhost:3000';
-    }
+    // Production backend on Render
+    return 'https://calpal-app-backend.onrender.com';
+    
+    // Uncomment below for local development:
+    // if (Platform.isAndroid) {
+    //   return 'http://10.0.2.2:3000';
+    // } else if (Platform.isIOS) {
+    //   return 'http://localhost:3000';
+    // } else {
+    //   return 'http://localhost:3000';
+    // }
   }
 
   /// API timeout duration

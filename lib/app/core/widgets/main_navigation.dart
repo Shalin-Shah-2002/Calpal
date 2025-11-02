@@ -25,20 +25,19 @@ class _MainNavigationViewState extends State<MainNavigationView> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true, // Allow body to extend behind navigation bar
+      extendBodyBehindAppBar: true,
       body: IndexedStack(index: _selectedIndex, children: _pages),
-      bottomNavigationBar: SafeArea(
-        child: LiquidGlassNavBar(
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          selectedColor: Colors.green[700],
-          unselectedColor: Colors.grey[600],
-          backgroundColor: Colors.white,
-          items: const [
-            NavBarItem(icon: Icons.search_rounded, label: 'Search'),
-            
-            NavBarItem(icon: Icons.calendar_today_rounded, label: 'History'),
-          ],
-        ),
+      bottomNavigationBar: LiquidGlassNavBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedColor: Colors.green[700],
+        unselectedColor: Colors.grey[600],
+        backgroundColor: Colors.white,
+        items: const [
+          NavBarItem(icon: Icons.search_rounded, label: 'Search'),
+          
+          NavBarItem(icon: Icons.calendar_today_rounded, label: 'History'),
+        ],
       ),
     );
   }

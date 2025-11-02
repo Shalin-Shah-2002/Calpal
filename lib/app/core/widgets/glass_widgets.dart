@@ -181,7 +181,7 @@ class _GlassButtonState extends State<GlassButton>
         builder: (context, child) {
           return Transform.scale(
             scale: _scaleAnimation.value,
-            child: Container(
+            child: SizedBox(
               width: widget.width,
               height: widget.height,
               child: ClipRRect(

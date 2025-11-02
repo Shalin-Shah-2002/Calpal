@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:get/get.dart';
 import '../../../data/models/saved_nutrition_model.dart';
 import '../../../data/services/nutrition_service.dart';
@@ -13,32 +14,73 @@ class HistoryController extends GetxController {
   final totalProtein = 0.0.obs;
   final totalCarbs = 0.0.obs;
   final totalFats = 0.0.obs;
+  
+  // Stream subscription for real-time updates
+  StreamSubscription<List<SavedNutrition>>? _nutritionSubscription;
 
   @override
   void onInit() {
     super.onInit();
-    loadNutritionForDate(selectedDate.value);
+    _startStreamForDate(selectedDate.value);
+  }
+  
+  @override
+  void onClose() {
+    _nutritionSubscription?.cancel();
+    _nutritionService.dispose();
+    super.onClose();
   }
 
-  /// Load nutrition data for a specific date
-  Future<void> loadNutritionForDate(DateTime date) async {
+  /// Start real-time stream for a specific date
+  void _startStreamForDate(DateTime date) {
     try {
       isLoading.value = true;
       selectedDate.value = date;
-      final data = await _nutritionService.getSavedNutritionByDate(date);
-      savedNutritionList.value = data;
-      _calculateTotals();
+      
+      // Cancel previous subscription
+      _nutritionSubscription?.cancel();
+      
+      // Subscribe to nutrition stream
+      _nutritionSubscription = _nutritionService
+          .getNutritionStreamForDate(date)
+          .listen(
+        (data) {
+          // Update UI with new data
+          savedNutritionList.value = data;
+          _calculateTotals();
+          isLoading.value = false;
+        },
+        onError: (error) {
+          isLoading.value = false;
+          Get.snackbar(
+            'Error',
+            'Failed to load nutrition data',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red[100],
+            colorText: Colors.red[900],
+          );
+        },
+      );
     } catch (e) {
+      isLoading.value = false;
       Get.snackbar(
         'Error',
-        'Failed to load nutrition data',
+        'Failed to start real-time updates',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red[100],
         colorText: Colors.red[900],
       );
-    } finally {
-      isLoading.value = false;
     }
+  }
+  
+  /// Load nutrition data for a specific date (backward compatibility)
+  Future<void> loadNutritionForDate(DateTime date) async {
+    _startStreamForDate(date);
+  }
+  
+  /// Manually refresh current date
+  void refreshData() {
+    _nutritionService.refreshCurrentDate();
   }
 
   /// Delete a nutrition entry
@@ -101,7 +143,7 @@ class HistoryController extends GetxController {
 
   /// Change selected date
   void changeDate(DateTime date) {
-    loadNutritionForDate(date);
+    _startStreamForDate(date);
   }
 
   /// Go to previous day
