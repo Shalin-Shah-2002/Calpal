@@ -7,6 +7,9 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+    // Calculate safe bottom padding for floating nav bar
+    final bottomPadding = MediaQuery.of(context).padding.bottom + 115.0;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('CalPal - Nutrition Search'),
@@ -16,7 +19,12 @@ class HomeView extends GetView<HomeController> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.only(
+            left: 16.0,
+            right: 16.0,
+            top: 16.0,
+            bottom: bottomPadding,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

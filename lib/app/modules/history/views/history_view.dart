@@ -237,8 +237,16 @@ class HistoryView extends GetView<HistoryController> {
         );
       }
 
+      // Calculate safe bottom padding for floating nav bar
+      final bottomPadding = MediaQuery.of(Get.context!).padding.bottom + 115.0;
+
       return ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: bottomPadding,
+        ),
         itemCount: controller.savedNutritionList.length,
         itemBuilder: (context, index) {
           final nutrition = controller.savedNutritionList[index];
